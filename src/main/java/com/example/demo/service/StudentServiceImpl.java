@@ -1,10 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.dao.StudentDao;
+import com.example.demo.dao.jdbc.StudeneJdbcDao;
 import com.example.demo.domain.Student;
 import com.example.demo.utils.ResponseEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -15,6 +17,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +28,9 @@ public class StudentServiceImpl {
 
     @Autowired(required = false)
     private StudentDao studentDao;
+
+    @Autowired
+    private StudeneJdbcDao studeneJdbcDao;
 
     @Transactional(readOnly = false)
     public Student save(Student student) {
@@ -78,12 +84,12 @@ public class StudentServiceImpl {
     /*
      * 待条件的分页查询
      */
-    public Page<Student> findpage(
-                                         String name,
-                                         String telephone,
-                                         String symptom,
-                                         Integer pageNmuber,
-                                         Integer pageSize
+    public ResponseEntity findpage(
+                                          String name,
+                                          String telephone,
+                                          String symptom,
+                                          Integer pageNmuber,
+                                          Integer pageSize
     ) {
 
         @SuppressWarnings("serial")
@@ -116,6 +122,23 @@ public class StudentServiceImpl {
         }
         PageRequest pageRequest = new PageRequest(pageNmuber-1, pageSize);
         Page<Student> page = studentDao.findAll(specification, pageRequest);
-        return page;
+        List<Student> content = page.getContent();
+        ResponseEntity responseEntity = new ResponseEntity();
+        responseEntity.setData(content);
+        String sql = "select student.id from student where 1 = 1 ";
+        if (name!=null){
+            sql += "and name like "+"'%"+name+"%' ";
+        }
+        if (telephone!=null){
+            sql+= "and telephone = "+"'"+telephone+"' ";
+        }
+        if (symptom!=null){
+            sql+= "and symptom like "+"'%"+symptom+"%'";
+        }
+        Integer count = studeneJdbcDao.getCount(sql);
+        responseEntity.setCount(count);
+        return responseEntity;
     }
+
+
 }
