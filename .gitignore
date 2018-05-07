@@ -15,8 +15,7 @@
 *.iws
 *.iml
 *.ipr
-*.xml
-
+.idea/ workspace.xml
 ### NetBeans ###
 /nbproject/private/
 /build/
