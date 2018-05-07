@@ -65,7 +65,7 @@ public class StudentController {
     /*
     带条件的分页查询
      */
-    @GetMapping(value="findpages")
+    @GetMapping(value="findpage")
     public ResponseEntity findpage(
                                           String name,
                                           String telephone,
