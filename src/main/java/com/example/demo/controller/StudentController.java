@@ -73,10 +73,8 @@ public class StudentController {
                                           Integer pageNmuber,
                                           Integer pageSize
     ){
-        name="1";
-        Page<Student> page = studentService.findpage(name, telephone, symptom, pageNmuber, pageSize);
-        ResponseEntity<Object> responseEntity = new ResponseEntity<>();
-        responseEntity.setData(page);
+        symptom="1";
+        ResponseEntity responseEntity = studentService.findpage(name, telephone, symptom, pageNmuber, pageSize);
         return responseEntity;
     }
 
