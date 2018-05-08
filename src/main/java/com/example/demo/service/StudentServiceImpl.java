@@ -52,6 +52,17 @@ public class StudentServiceImpl {
 	};
 
 	/*
+	根据id查询
+	 */
+	public Student findById(String id){
+		Optional<Student> student = studentDao.findById(id);
+		if (student!=null){
+			return student.get();
+		}
+		return null;
+	}
+
+	/*
 	 * 修改
 	 */
 	public Student update(String id, String sex, String name, String telephone, String symptom, String medicine) {

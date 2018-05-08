@@ -56,10 +56,16 @@ public class StudentController {
             String symptom,
             String medicine
     ){
-    	id = "1";
-        sex = "不难不拿";
         Student student = studentService.update(id, sex, name, telephone, symptom, medicine);
         return new ResponseEntity(HttpStatus.OK,student);
+    }
+    /*
+    根据id查询
+     */
+    @GetMapping(value = "findbyid/{id}")
+    public ResponseEntity findById(@PathVariable(value = "id") String id){
+        Student byId = studentService.findById(id);
+        return new ResponseEntity(HttpStatus.OK,byId);
     }
 
     /*
