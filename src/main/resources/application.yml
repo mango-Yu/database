@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/person?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
     username: root
-    password: 123456
+    password: syy1994
   http:
     encoding:
       charset: UTF-8
