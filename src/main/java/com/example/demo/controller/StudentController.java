@@ -56,8 +56,6 @@ public class StudentController {
                                         String symptom,
                                         String medicine
     ){
-        id = "1";
-        sex = "不难不拿";
         Student student = studentService.update(id, sex, name, telephone, symptom, medicine);
         return new ResponseEntity(HttpStatus.OK,student);
     }
@@ -73,10 +71,7 @@ public class StudentController {
                                           Integer pageNmuber,
                                           Integer pageSize
     ){
-        symptom="1";
         ResponseEntity responseEntity = studentService.findpage(name, telephone, symptom, pageNmuber, pageSize);
         return responseEntity;
     }
-
-
 }

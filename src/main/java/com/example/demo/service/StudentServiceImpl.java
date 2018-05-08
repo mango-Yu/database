@@ -139,6 +139,4 @@ public class StudentServiceImpl {
         responseEntity.setCount(count);
         return responseEntity;
     }
-
-
 }
