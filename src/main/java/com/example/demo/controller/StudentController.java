@@ -32,11 +32,11 @@ public class StudentController {
 
     @PostMapping(value = "save")
     public ResponseEntity save(
-                                      String name,
-                                      String sex,
-                                      String telephone,
-                                      String symptom,
-                                      String medicine
+            String name,
+            String sex,
+            String telephone,
+            String symptom,
+            String medicine
     ){
         Student student = new Student(UUID.randomUUID().toString(), name, sex, telephone, symptom, medicine, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()).toString());
         Student save = studentService.save(student);
@@ -46,16 +46,18 @@ public class StudentController {
     /*
     修改方法
      */
-    @PostMapping(value = "update")
-   // @GetMapping(value="update")
+//    @PostMapping(value = "update")
+    @GetMapping(value="update")
     public ResponseEntity update(
-                                        String id,
-                                        String sex,
-                                        String name,
-                                        String telephone,
-                                        String symptom,
-                                        String medicine
+            String id,
+            String sex,
+            String name,
+            String telephone,
+            String symptom,
+            String medicine
     ){
+    	id = "1";
+        sex = "不难不拿";
         Student student = studentService.update(id, sex, name, telephone, symptom, medicine);
         return new ResponseEntity(HttpStatus.OK,student);
     }
@@ -65,14 +67,16 @@ public class StudentController {
      */
     @GetMapping(value="findpage")
     public ResponseEntity findpage(
-                                          String id,
-                                          String name,
-                                          String telephone,
-                                          String symptom,
-                                          Integer pageNmuber,
-                                          Integer pageSize
-    ){
-        ResponseEntity responseEntity = studentService.findpage(id, name, telephone, symptom, pageNmuber, pageSize);
-        return responseEntity;
+    		String name, 
+			String telephone, 
+			String symptom,
+			String beginDt,
+			String endDt,
+			String singleDate,
+			Integer pageNmuber,
+			Integer pageSize
+    		){
+        ResponseEntity responseEntity = studentService.findpage(name, telephone, symptom, beginDt,endDt,pageNmuber, pageSize);
+    	return responseEntity;
     }
 }
