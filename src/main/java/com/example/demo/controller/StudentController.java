@@ -46,8 +46,8 @@ public class StudentController {
     /*
     修改方法
      */
-//    @PostMapping(value = "update")
-    @GetMapping(value="update")
+    @PostMapping(value = "update")
+   // @GetMapping(value="update")
     public ResponseEntity update(
                                         String id,
                                         String sex,
