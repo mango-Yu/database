@@ -126,13 +126,13 @@ public class StudentServiceImpl {
         ResponseEntity responseEntity = new ResponseEntity();
         responseEntity.setData(content);
         String sql = "select student.id from student where 1 = 1 ";
-        if (name!=null){
+        if (name!=null && telephone != ""){
             sql += "and name like "+"'%"+name+"%' ";
         }
-        if (telephone!=null){
+        if (telephone!=null && telephone !=""){
             sql+= "and telephone = "+"'"+telephone+"' ";
         }
-        if (symptom!=null){
+        if (symptom!=null && symptom != ""){
             sql+= "and symptom like "+"'%"+symptom+"%'";
         }
         Integer count = studeneJdbcDao.getCount(sql);
