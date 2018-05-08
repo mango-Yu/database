@@ -54,6 +54,7 @@ public class StudentServiceImpl {
     /*
      * 修改
      */
+    @Transactional(readOnly = false)
     public Student update(String id, String sex, String name, String telephone, String symptom, String medicine) {
         Student student = null;
         Optional<Student> byId = studentDao.findById(id);
@@ -85,6 +86,7 @@ public class StudentServiceImpl {
      * 待条件的分页查询
      */
     public ResponseEntity findpage(
+                                          String id,
                                           String name,
                                           String telephone,
                                           String symptom,
@@ -99,6 +101,9 @@ public class StudentServiceImpl {
             public Predicate toPredicate(Root<Student> root, CriteriaQuery<?> criteriaQuery,
                                          CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
+                if (id != null && id != "") {
+                    predicates.add(criteriaBuilder.like(root.get("id").as(String.class), "%" + id + "%"));
+                }
                 if (name != null && name != "") {
                     predicates.add(criteriaBuilder.like(root.get("name").as(String.class), "%" + name + "%"));
                 }
@@ -126,7 +131,10 @@ public class StudentServiceImpl {
         ResponseEntity responseEntity = new ResponseEntity();
         responseEntity.setData(content);
         String sql = "select student.id from student where 1 = 1 ";
-        if (name!=null && telephone != ""){
+        if (id!=null && id != ""){
+            sql += "and id like "+"'%"+id+"%' ";
+        }
+        if (name!=null && name != ""){
             sql += "and name like "+"'%"+name+"%' ";
         }
         if (telephone!=null && telephone !=""){

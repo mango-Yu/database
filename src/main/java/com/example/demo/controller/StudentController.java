@@ -65,13 +65,14 @@ public class StudentController {
      */
     @GetMapping(value="findpage")
     public ResponseEntity findpage(
+                                          String id,
                                           String name,
                                           String telephone,
                                           String symptom,
                                           Integer pageNmuber,
                                           Integer pageSize
     ){
-        ResponseEntity responseEntity = studentService.findpage(name, telephone, symptom, pageNmuber, pageSize);
+        ResponseEntity responseEntity = studentService.findpage(id, name, telephone, symptom, pageNmuber, pageSize);
         return responseEntity;
     }
 }

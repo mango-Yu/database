@@ -31,7 +31,6 @@ public class ResponseEntity<T> implements Serializable {
         this.code = httpStatus.value();
         this.data = data;
         this.msg = msg;
-        this.count = count;
     }
 
 
