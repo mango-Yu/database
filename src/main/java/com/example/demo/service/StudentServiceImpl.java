@@ -59,12 +59,13 @@ public class StudentServiceImpl {
 		if (student!=null){
 			return student.get();
 		}
-		return null;
+		return new Student();
 	}
 
 	/*
 	 * 修改
 	 */
+	@Transactional(readOnly = false)
 	public Student update(String id, String sex, String name, String telephone, String symptom, String medicine) {
 		Student student = null;
 		Optional<Student> byId = studentDao.findById(id);

@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Date;
 import java.util.UUID;
 
@@ -46,8 +48,8 @@ public class StudentController {
     /*
     修改方法
      */
-//    @PostMapping(value = "update")
-    @GetMapping(value="update")
+    @PostMapping(value = "update")
+//    @GetMapping(value="update")
     public ResponseEntity update(
             String id,
             String sex,
@@ -64,10 +66,14 @@ public class StudentController {
      */
     @GetMapping(value = "findbyid/{id}")
     public ResponseEntity findById(@PathVariable(value = "id") String id){
-        Student byId = studentService.findById(id);
-        return new ResponseEntity(HttpStatus.OK,byId);
+        Student student = studentService.findById(id);
+        ResponseEntity responseEntity = new ResponseEntity();
+        List<Student> list = new ArrayList<>();
+        list.add(student);
+        responseEntity.setData(list);
+        responseEntity.setCount(1);
+        return responseEntity;
     }
-
     /*
     带条件的分页查询
      */
