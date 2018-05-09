@@ -64,15 +64,13 @@ public class StudentController {
     /*
     根据id查询
      */
+    /*@PostMapping(value = "findbyid")
+    public ResponseEntity findbyid(String id){
+        return new ResponseEntity(HttpStatus.OK,studentService.findById(id));
+    }*/
     @GetMapping(value = "findbyid/{id}")
-    public ResponseEntity findById(@PathVariable(value = "id") String id){
-        Student student = studentService.findById(id);
-        ResponseEntity responseEntity = new ResponseEntity();
-        List<Student> list = new ArrayList<>();
-        list.add(student);
-        responseEntity.setData(list);
-        responseEntity.setCount(1);
-        return responseEntity;
+    public ResponseEntity findbyid(@PathVariable("id") String id){
+        return studentService.findById(id);
     }
     /*
     带条件的分页查询
