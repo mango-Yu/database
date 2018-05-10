@@ -4,6 +4,8 @@ import com.example.demo.dao.StudentDao;
 import com.example.demo.dao.jdbc.StudeneJdbcDao;
 import com.example.demo.domain.Student;
 import com.example.demo.utils.ResponseEntity;
+import jdk.nashorn.internal.runtime.regexp.joni.Option;
+import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -35,16 +37,12 @@ public class StudentServiceImpl {
     @Transactional(readOnly = false)
     public Student save(Student student) {
         return studentDao.save(student);
-    }
-
-    ;
+    };
 
     @Transactional(readOnly = false)
     public void delete(String id) {
-        studentDao.deleteById(id);
-    }
-
-    ;
+        studentDao.delete(id);
+    };
 
     public ResponseEntity find() {
         List<Student> list = studentDao.findAll();
@@ -53,65 +51,48 @@ public class StudentServiceImpl {
         responseEntity.setData(list);
         responseEntity.setCount(list.size());
         return responseEntity;
-    }
+    };
 
-    ;
 
-    /*
+        /*
     根据id查询
      */
-    /*public Student findById(String id) {
-        if (id == null || id == "") {
-            return new Student();
-        }
-        Optional<Student> student = studentDao.findById(id);
-
-        return student.get();
-    }*/
-    public ResponseEntity findById(String id){
-        if (id == null || id == ""){
-            ResponseEntity responseEntity = new ResponseEntity();
-            responseEntity.setCount(0);
-            List<Student>list = new ArrayList<>();
-            list.add(new Student());
-            responseEntity.setData(list);
-        }
-        Optional<Student> student = studentDao.findById(id);
-        ResponseEntity responseEntity = new ResponseEntity();
+    public List<Student> findById(String id){
         List<Student> list = new ArrayList<>();
-        list.add(student.get());
-        responseEntity.setData(list);
-        responseEntity.setCount(1);
-        return responseEntity;
+        if (id == null || id == ""){
+            list.add(new Student());
+        }
+        Student student = studentDao.findOne(id);
+        if (student == null){
+            return list;
+        }
+        list.add(student);
+        return list;
     }
-
     /*
      * 修改
      */
     @Transactional(readOnly = false)
     public Student update(String id, String sex, String name, String telephone, String symptom, String medicine) {
         Student student = null;
-        Optional<Student> byId = studentDao.findById(id);
-        if (byId != null) {
-            student = byId.get();
-            if (student != null) {
-                if (sex != null) {
-                    student.setSex(sex);
-                }
-                if (name != null) {
-                    student.setName(name);
-                }
-                if (telephone != null) {
-                    student.setTelephone(telephone);
-                }
-                if (symptom != null) {
-                    student.setSymptom(symptom);
-                }
-                if (medicine != null) {
-                    student.setMedicine(medicine);
-                }
-                save(student);
+        student = studentDao.findOne(id);
+        if (student != null) {
+            if (sex != null) {
+                student.setSex(sex);
             }
+            if (name != null) {
+                student.setName(name);
+            }
+            if (telephone != null) {
+                student.setTelephone(telephone);
+            }
+            if (symptom != null) {
+                student.setSymptom(symptom);
+            }
+            if (medicine != null) {
+                student.setMedicine(medicine);
+            }
+            save(student);
         }
         return student;
     }
@@ -120,13 +101,13 @@ public class StudentServiceImpl {
      * 待条件的分页查询
      */
     public ResponseEntity findpage(
-            String name,
-            String telephone,
-            String symptom,
-            String begindt,
-            String endDt,
-            Integer pageNmuber,
-            Integer pageSize
+                                          String name,
+                                          String telephone,
+                                          String symptom,
+                                          String begindt,
+                                          String endDt,
+                                          Integer pageNmuber,
+                                          Integer pageSize
     ) {
 
         @SuppressWarnings("serial")
@@ -145,12 +126,14 @@ public class StudentServiceImpl {
                 if (symptom != null && symptom != "") {
                     predicates.add(criteriaBuilder.like(root.get("symptom").as(String.class), "%" + symptom + "%"));
                 }
-                if ((begindt != null && begindt != "") && (endDt != null && endDt != "")) {
+                if ((begindt!=null && begindt != "") && (endDt!=null && endDt!="")){
                     predicates.add(criteriaBuilder.between(root.get("date").as(String.class), begindt, endDt));
-                } else if (begindt != null && begindt != "") {
-                    predicates.add(criteriaBuilder.like(root.get("date").as(String.class), begindt + "%"));
-                } else if (endDt != null && endDt != "") {
-                    predicates.add(criteriaBuilder.like(root.get("date").as(String.class), endDt + "%"));
+                }
+                else if (begindt != null && begindt!= ""){
+                    predicates.add(criteriaBuilder.like(root.get("date").as(String.class), begindt+"%"));
+                }
+                else if (endDt!= null && endDt!= ""){
+                    predicates.add(criteriaBuilder.like(root.get("date").as(String.class), endDt+"%"));
                 }
                 Predicate[] p = new Predicate[predicates.size()];
                 p = predicates.toArray(p);
@@ -158,33 +141,35 @@ public class StudentServiceImpl {
                 return predicate;
             }
         };
-        if (pageNmuber == null || pageNmuber < 0) {
+        if (pageNmuber == null || pageNmuber<0) {
             pageNmuber = 1;
         }
-        if (pageSize == null || pageSize < 0) {
+        if (pageSize == null || pageSize <0) {
             pageSize = 10;
         }
-        PageRequest pageRequest = new PageRequest(pageNmuber - 1, pageSize);
+        PageRequest pageRequest = new PageRequest(pageNmuber-1, pageSize);
         Page<Student> page = studentDao.findAll(specification, pageRequest);
         List<Student> content = page.getContent();
         ResponseEntity responseEntity = new ResponseEntity();
         responseEntity.setData(content);
         String sql = "select student.id from student where 1 = 1 ";
-        if (name != null && telephone != "") {
-            sql += "and name like " + "'%" + name + "%' ";
+        if (name!=null && telephone != ""){
+            sql += "and name like "+"'%"+name+"%' ";
         }
-        if (telephone != null && telephone != "") {
-            sql += "and telephone = " + "'" + telephone + "' ";
+        if (telephone!=null && telephone !=""){
+            sql+= "and telephone = "+"'"+telephone+"' ";
         }
-        if (symptom != null && symptom != "") {
-            sql += "and symptom like " + "'%" + symptom + "%' ";
+        if (symptom!=null && symptom != ""){
+            sql+= "and symptom like "+"'%"+symptom+"%' ";
         }
-        if ((begindt != null && begindt != "") && (endDt != null && endDt != "")) {
-            sql += "and date between " + " '" + begindt + "'" + "and " + " '" + endDt + "' ";
-        } else if (begindt != null && begindt != "") {
-            sql += " and date like " + " '" + begindt + "%'";
-        } else if (endDt != null && endDt != "") {
-            sql += " and date like " + " '" + endDt + "%'";
+        if ((begindt!=null && begindt != "") && (endDt!=null && endDt!="")){
+            sql += "and date between "+ " '"+begindt+"'" +"and "+" '"+endDt+"' ";
+        }
+        else if (begindt != null && begindt!= ""){
+            sql += " and date like "+" '"+begindt+"%'";
+        }
+        else if(endDt!= null && endDt!= ""){
+            sql += " and date like "+ " '"+endDt + "%'";
         }
         Integer count = studeneJdbcDao.getCount(sql);
         responseEntity.setCount(count);

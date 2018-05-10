@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -34,11 +34,11 @@ public class StudentController {
 
     @PostMapping(value = "save")
     public ResponseEntity save(
-            String name,
-            String sex,
-            String telephone,
-            String symptom,
-            String medicine
+                                      String name,
+                                      String sex,
+                                      String telephone,
+                                      String symptom,
+                                      String medicine
     ){
         Student student = new Student(UUID.randomUUID().toString(), name, sex, telephone, symptom, medicine, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()).toString());
         Student save = studentService.save(student);
@@ -48,15 +48,15 @@ public class StudentController {
     /*
     修改方法
      */
-    @PostMapping(value = "update")
-//    @GetMapping(value="update")
+  @PostMapping(value = "update")
+//      @GetMapping(value="update")
     public ResponseEntity update(
-            String id,
-            String sex,
-            String name,
-            String telephone,
-            String symptom,
-            String medicine
+                                        String id,
+                                        String sex,
+                                        String name,
+                                        String telephone,
+                                        String symptom,
+                                        String medicine
     ){
         Student student = studentService.update(id, sex, name, telephone, symptom, medicine);
         return new ResponseEntity(HttpStatus.OK,student);
@@ -64,29 +64,33 @@ public class StudentController {
     /*
     根据id查询
      */
-    /*@PostMapping(value = "findbyid")
-    public ResponseEntity findbyid(String id){
-        return new ResponseEntity(HttpStatus.OK,studentService.findById(id));
-    }*/
-    @GetMapping(value = "findbyid/{id}")
-    public ResponseEntity findbyid(@PathVariable("id") String id){
-        return studentService.findById(id);
+    @PostMapping(value = "findbyid/{id}")
+    public ResponseEntity findById(@PathVariable(value = "id") String id){
+        List<Student> list1 = studentService.findById(id);
+        ResponseEntity responseEntity = new ResponseEntity();
+        responseEntity.setData(list1);
+        if (list1.size() == 0){
+            responseEntity.setCount(0);
+        }
+        responseEntity.setCount(1);
+        return responseEntity;
     }
+
     /*
     带条件的分页查询
      */
     @GetMapping(value="findpage")
     public ResponseEntity findpage(
-    		String name, 
-			String telephone, 
-			String symptom,
-			String beginDt,
-			String endDt,
-			String singleDate,
-			Integer pageNmuber,
-			Integer pageSize
-    		){
+                                          String name,
+                                          String telephone,
+                                          String symptom,
+                                          String beginDt,
+                                          String endDt,
+                                          String singleDate,
+                                          Integer pageNmuber,
+                                          Integer pageSize
+    ){
         ResponseEntity responseEntity = studentService.findpage(name, telephone, symptom, beginDt,endDt,pageNmuber, pageSize);
-    	return responseEntity;
+        return responseEntity;
     }
 }
