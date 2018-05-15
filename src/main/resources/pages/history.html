@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>历史记录</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../static/lib/layui/css/layui.css">
+    <meta http-equiv="Access-Control-Allow-Origin" content="*"/>
+    <style>
+        .inner {
+            width: 1360px;
+            margin: 100px auto;
+        }
+        .layui-table-view {
+            margin-top: 30px;
+            width: 1360px !important;
+        }
+        .layui-table-cell {
+            height: auto;
+            line-height: 28px;
+            padding: 0 15px;
+            position: relative;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            box-sizing: border-box;
+        }
+        #search{margin-left: 20px;}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="inner">
+        <h1>病情历史记录</h1>
+        <form action="" class="layui-form">
+            <div class="layui-row">
+                <div class="layui-row ">
+                    <div class="layui-col-md3">
+                        <label class="layui-form-label">电话</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="telephone" placeholder="请输入电话" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-col-md3">
+                        <label class="layui-form-label">症状</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="symptom" placeholder="请输入症状"
+                                   class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-col-md3">
+                        <label class="layui-form-label">开始日期</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="beginTime" lay-verify="required" placeholder="年-月-日"
+                                   class="layui-input input-date" readonly>
+                        </div>
+                    </div>
+                    <div class="layui-col-md3">
+                        <label class="layui-form-label">结束日期</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="endTime" lay-verify="required" placeholder="年-月-日"
+                                   class="layui-input input-date" readonly>
+                        </div>
+                    </div>
+                    <button class="layui-btn" data-type="reload" id="search" type="button">搜索</button>
+                </div>
+            </div>
+        </form>
+        <table class="layui-hide" id="preInfoTable" lay-filter="demo"></table>
+    </div>
+</div>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+
+</script>
+
+<script type="text/html" id="indexTpl">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script src="../static/lib/layui/layui.js"></script>
+<script src="../static/lib/js/jquery-1.11.2.min.js"></script>
+<script src="../static/lib/js/jquery.cookie.js"></script>
+<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+<script>
+    layui.use(['table', 'laydate', 'form'], function () {
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var form = layui.form;
+        laydate.render({
+            elem: '#beginTime' //指定元素
+        });
+        laydate.render({
+            elem: '#endTime' //指定元素
+        });
+        //监听表格复选框选择
+        table.on('checkbox(demo)', function (obj) {
+            console.log(obj)
+        });
+        //渲染表格
+        table.render({
+            elem:'#preInfoTable',
+            url:'http://localhost:8081/findpage',
+            cols:[[
+                {type: 'checkbox', fixed: 'left'}
+                ,{title: '序号',templet: '#indexTpl'}
+                ,{field: 'name', title: '姓名', width:80}
+                ,{field: 'sex', title: '性别', width:80, sort: true}
+                ,{field: 'telephone', title: '电话', width:120}
+                ,{field: 'symptom', title: '症状', width: 250,align:'center'}
+                ,{field: 'medicine', title: '药方', width: 250,align:'center'}
+                ,{field: 'date', title: '日期', width: 162, sort: true,align:'center'}
+                ,{title: '操作', width: 200, toolbar: '#barDemo',align:'center'}
+                ]]
+            ,request: {
+                pageName: 'pageNmuber' //页码的参数名称，默认：page
+                ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+            }
+            ,page: true //是否显示分页
+            ,id: 'testReload'
+            ,height:'500'
+            ,width:'892'
+        });
+        //监听工具条
+        table.on('tool(demo)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'detail') {
+               // layer.msg('ID：' + data.id + ' 的查看操作');
+                $.cookie('ID', data.id,{ path: "/"}); // 存储 cookie
+                window.location.href='/precription/pages/precription-detail.html';
+            }
+        });
+
+        //条件查询表格数据
+        var $ = layui.$, active = {
+            reload: function () {
+                var symptom = $('#symptom');
+                var telephone = $('#telephone');
+                var beginTime = $('#beginTime');
+                var endTime = $('#endTime');
+
+                //执行重载
+                table.reload('testReload', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+                        symptom: symptom.val(),
+                        telephone: telephone.val(),
+                        beginDt: beginTime.val(),
+                        endDt: endTime.val()
+                    }
+                    ,request: {
+                        pageName: 'pageNmuber' //页码的参数名称，默认：page
+                        ,limitName: 'pageSize' //每页数据量的参数名，默认：limit
+                    }
+                });
+            }
+        };
+        //监听按钮事件
+        $('.layui-form .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+</script>
+
+</body>
+</html>
