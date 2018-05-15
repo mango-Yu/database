@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>添加病情和药方</title>
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+    <style>
+        .inner {
+            width: 1280px;
+            margin: 50px auto;
+        }
+
+        #nav-menu {
+            text-align: center;
+            float: left;
+        }
+
+        #nav-menu .layui-nav-tree {
+            width: 100px;
+        }
+
+        #nav-menu .layui-nav-tree a {
+            height: 50px;
+            line-height: 50px;
+        }
+
+        .right-table {
+            float: left;
+            width: 1170px;
+            margin-left: 10px;
+            position: relative;
+        }
+
+        .layui-btn-group .layui-btn {
+            border: 1px solid #fff;
+        }
+
+        #formTable {
+            min-height: 90px;
+        }
+
+        .layui-table-cell {
+            height: auto;
+            line-height: 28px;
+            padding: 0 15px;
+            position: relative;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            box-sizing: border-box;
+        }
+
+        .layui-table-view {
+            margin-top: 30px;
+            width: 1170px !important;
+        }
+
+        .layui-form-item .layui-input-inline {
+            margin-bottom: 5px;
+            width: 180px;
+        }
+
+        #formTable .layui-inline {
+            display: block;
+        }
+
+        #select_prod {
+            line-height: 60px;
+            text-align: center;
+        }
+
+        #IllDetail .layui-form-item {
+            margin: 25px 0 5px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="inner">
+        <div class="left-nav" id="nav-menu">
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <!-- 侧边导航: <ul class="layui-nav layui-nav-tree layui-nav-side"> -->
+                <li class="layui-nav-item"><a href="javascript:;">头</a></li>
+                <li class="layui-nav-item"><a href="javascript:;">手</a></li>
+                <li class="layui-nav-item"><a href="javascript:;">身</a></li>
+                <li class="layui-nav-item"><a href="javascript:;">足</a></li>
+                <li class="layui-nav-item"><a href="javascript:;">头</a></li>
+                <li class="layui-nav-item"><a href="javascript:;">手</a></li>
+                <li class="layui-nav-item"><a href="javascript:;">身</a></li>
+                <li class="layui-nav-item"><a href="javascript:;">足</a></li>
+            </ul>
+        </div>
+        <div class="right-table">
+            <form class="layui-form" id="formTable" action="">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <div class="layui-input-inline proSelect">
+                            <select name="modules" lay-verify="required" lay-search="" id="zcySelect">
+                                <option value="">直接选择或搜索选择</option>
+                                <option value="1">layer</option>
+                                <option value="2">form</option>
+                                <option value="3">layim</option>
+                                <option value="4">element</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <select name="modules" lay-verify="required" lay-search="">
+                                <option value="">直接选择或搜索选择</option>
+                                <option value="1">layer</option>
+                                <option value="2">form</option>
+                                <option value="3">layim</option>
+                                <option value="4">element</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <select name="modules" lay-verify="required" lay-search="">
+                                <option value="">直接选择或搜索选择</option>
+                                <option value="1">layer</option>
+                                <option value="2">form</option>
+                                <option value="3">layim</option>
+                                <option value="4">element</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <select name="modules" lay-verify="required" lay-search="">
+                                <option value="">直接选择或搜索选择</option>
+                                <option value="1">layer</option>
+                                <option value="2">form</option>
+                                <option value="3">layim</option>
+                                <option value="4">element</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <select name="modules" lay-verify="required" lay-search="">
+                                <option value="">直接选择或搜索选择</option>
+                                <option value="1">layer</option>
+                                <option value="2">form</option>
+                                <option value="3">layim</option>
+                                <option value="4">element</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <div class="layui-input-inline">
+                            <select name="modules" lay-verify="required" lay-search="">
+                                <option value="">直接选择或搜索选择</option>
+                                <option value="1">layer</option>
+                                <option value="2">form</option>
+                                <option value="3">layim</option>
+                                <option value="4">element</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-btn-group btn-group">
+                    <button class="layui-btn" type="button" id="addSelect">添加选择框</button>
+                    <button class="layui-btn" type="button" id="addSelectDetail">添加详情</button>
+                    <button class="layui-btn" type="button" id="addIllDetail">添加病情</button>
+
+                </div>
+            </form>
+            <table class="layui-table" id="preInfoTable" lay-data="{width: 892, height:300,id:'tableBox'}"
+                   lay-filter="preInfoTable">
+
+            </table>
+        </div>
+        <div style="clear:both"></div>
+    </div>
+</div>
+<!--弹窗内容-->
+<div id="select_prod" class="layui-form" hidden="hidden">
+    <div class="layui-input-inline">
+        <input type="text" name="text" required lay-verify="required" placeholder="" autocomplete="off"
+               class="layui-input">
+    </div>
+</div>
+<form class="layui-form" id="IllDetail" hidden="hidden">
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-inline">
+            <input type="text" name="name" required lay-verify="name" placeholder="" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-block">
+            <input type="radio" name="sex" value="男" data-value="0" title="男" class="man">
+            <input type="radio" name="sex" value="女" data-value="1" title="女" class="women" checked>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">电话</label>
+        <div class="layui-input-inline">
+            <input type="text" name="telephone" required lay-verify="telephone" placeholder="" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">症状</label>
+        <div class="layui-input-inline">
+            <input type="text" name="symptom" required lay-verify="symptom" placeholder="" autocomplete="off"
+                   class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">药方</label>
+        <div class="layui-input-inline">
+            <textarea type="text" name="medicine" style="height: 100px;" required lay-verify="medicine" placeholder=""
+                      autocomplete="off" class="layui-input"></textarea>
+        </div>
+    </div>
+</form>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="indexTpl">
+    {{d.LAY_TABLE_INDEX+1}}
+</script>
+<script src="../lib/layui/layui.js"></script>
+
+<script src="../lib/js/jquery-1.11.2.min.js"></script>
+<script src="../lib/js/jquery.cookie.js"></script>
+<script>
+    /*重新渲染form*/
+    function renderForm() {
+        layui.use('form', function () {
+            var form = layui.form;
+            form.render();
+        });
+    }
+    /*表单验证*/
+    function customValidate() {
+        var name = $("input[name=name]").val();
+        var telephone = $("input[name=telephone]").val();
+        var symptom = $("input[name=symptom]").val();
+        var medicine = $("textarea[name=medicine]").val();
+        var phoneTest = /^1[3|4|5|8][0-9]\d{4,8}$/;
+        var rs = {
+            flag: false,
+            text: ''
+        };
+        if (!name) {
+            rs.flag = true;
+            rs.text = '请输入姓名';
+            return rs;
+        }
+        if (!phoneTest.test(telephone)) {
+            rs.flag = true;
+            rs.text = '请输入正确手机号';
+            return rs;
+        }
+        if (!symptom) {
+            rs.flag = true;
+            rs.text = '请输入病因';
+            return rs;
+        }
+        if (!medicine) {
+            rs.flag = true;
+            rs.text = '请输入药方';
+            return rs;
+        }
+        return rs;
+    }
+    function initForm(form ,_this) {
+        var name = $(_this).closest('tr').find('.laytable-cell-2-name').text();
+        var sex = $(_this).closest('tr').find('.laytable-cell-2-sex').text();
+        var telephone = $(_this).closest('tr').find('.laytable-cell-2-telephone').text();
+        var symptom = $(_this).closest('tr').find('.laytable-cell-2-symptom').text();
+        var medicine = $(_this).closest('tr').find('.laytable-cell-2-medicine').text();
+        if (sex == "男") {
+            $('input:radio[name=sex]')[0].checked = true;
+            $('input:radio[name=sex]')[1].checked = false;
+
+        } else if (sex == "女") {
+            $('input:radio[name=sex]')[0].checked = false;
+            $('input:radio[name=sex]')[1].checked = true;
+
+        }
+        $('input[name=name]').val(name);
+        $('input[name=telephone]').val(telephone);
+        $('input[name=symptom]').val(symptom);
+        $('textarea[name=medicine]').val(medicine);
+       // form.render();
+        form.render('radio');
+    }
+    function clearForm() {
+        $("#IllDetail").find('input[name=name]').val('');
+        $("#IllDetail").find('input[name=telephone]').val('');
+        $("#IllDetail").find('input[name=symptom]').val('');
+        $("#IllDetail").find("textarea").val('');
+
+    }
+    var id='0000';
+    if($.cookie('ID') ){
+        id=$.cookie('ID');
+    }
+    layui.use(['table', 'form'], function () {
+        var table = layui.table;
+        var form = layui.form;
+        /*初始表格渲染*/
+        table.render({
+            elem: '#preInfoTable'
+            , height: 300
+            , url: 'http://localhost:8081/findbyid/'+id//数据接口
+            , method:'POST'
+            /*,where:{
+                id:id
+            }*/
+            , page: false //开启分页
+            , id: 'reloadTable'
+            , cols: [[ //表头
+                {type: 'checkbox'}
+                , {title: '序号', templet: '#indexTpl', width: 50}
+                , {field: 'name', title: '姓名', width: 90, edit: 'text'}
+                , {field: 'sex', title: '性别', width: 80, sort: true}
+                , {field: 'telephone', title: '电话', width: 120, edit: 'text'}
+                , {field: 'symptom', title: '症状', width: 210, align: 'center', edit: 'text'}
+                , {field: 'medicine', title: '药方', width: 210, align: 'center', edit: 'text'}
+                , {field: 'date', title: '日期', width: 150, sort: true, align: 'center'}
+                , {title: '操作', width: 200, toolbar: '#barDemo', align: 'center'}
+            ]]
+        });
+        //监听表格复选框选择
+        table.on('checkbox(preInfoTable)', function (obj) {
+
+        });
+        /*表格修改单元格*/
+        table.on('edit(preInfoTable)', function (obj) {
+            var value = obj.value //得到修改后的值
+                    , data = obj.data //得到所在行所有键值
+                    , field = obj.field; //得到字段
+            layer.msg('[ID: ' + data.id + '] ' + field + ' 字段更改为：' + value);
+        });
+        //监听工具条
+        table.on('tool(preInfoTable)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'del') {//删除
+                layer.confirm('真的删除么', function (index) {
+                    $.cookie('ID', '', { expires: -1 ,path: "/"});
+                    id='0000';
+                    window.location.reload();
+                });
+            } else if (obj.event === 'edit') {//编辑
+                var _this=this;
+                initForm(form ,_this);
+                layer.open({
+                    type: 1,
+                    content: $("#IllDetail"),
+                    title: "修改病人病情和药方",
+                    btn: ['确定', '取消'],
+                    area: ['350px', '550px'],
+                    yes: function (index, layero) {
+                        var validateResult = customValidate();
+                        if (validateResult.flag) {
+                            layer.alert(validateResult.text, {icon: 5});
+                            return;
+                        }
+                        var dataStr = $("#IllDetail").serialize();
+                        var params = decodeURIComponent(dataStr, true);
+                        console.log(params);
+                        $.ajax({
+                            url: 'http://localhost:8081/update',
+                            type: 'POST',
+                            contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                            data: 'id='+data.id+"&"+params,
+                            success: function (res) {
+                                $.cookie('ID', data.id,{ path: "/"}); // 存储 cookie
+                                layer.close(index);
+                                window.location.reload();
+                            },
+                            error: function () {
+                                layer.msg("输入有误，请重新输入！")
+                            }
+                        });
+                    },
+                    success: function (layero, index) {
+                        $(':focus').blur();
+                    }
+                });
+            }
+        });
+        /*添加病情和药方详情*/
+        $("#addIllDetail").on('click', function () {
+            clearForm();
+            layer.open({
+                type: 1,
+                content: $("#IllDetail"),
+                title: "添加病人病情和药方",
+                btn: ['确定', '取消'],
+                area: ['350px', '550px'],
+                yes: function (index, layero) {
+                    var validateResult = customValidate();
+                    if (validateResult.flag) {
+                        layer.alert(validateResult.text, {icon: 5});
+                        return;
+                    }
+                    var dataStr = $("#IllDetail").serialize();
+                    var params = decodeURIComponent(dataStr, true);
+
+                    $.ajax({
+                        url: 'http://localhost:8081/save',
+                        type: 'POST',
+                        contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                        data: params,
+                        success: function (data) {
+                            $.cookie('ID', data.data.id,{ path: "/"}); // 存储 cookie
+                            layer.close(index);
+                            window.location.reload();
+                        },
+                        error: function () {
+                            layer.msg("输入有误，请重新输入！")
+                        }
+                    });
+                },
+
+                success: function (layero, index) {
+                    $(':focus').blur();
+                }
+
+
+            });
+        });
+    });
+    /*添加下拉框*/
+    var html = '<div class="layui-inline">' +
+            '<div class="layui-input-inline">' +
+            '<select name="modules" lay-verify="required" lay-search="">' +
+            '<option value="">直接选择或搜索选择</option>' +
+            '</select>' +
+            '</div>' +
+            '</div>';
+
+    $("#addSelect").on('click', function () {
+        $('#formTable .layui-form-item').append(html);
+        renderForm();//表单重新渲染，要不然添加完显示不出来新的option
+    });
+    $('#addSelectDetail').on('click', function () {
+        addProductClassify();
+        renderForm();//表单重新渲染，要不然添加完显示不出来新的option
+    });
+    //增加下拉框option按钮点击事件
+    function addProductClassify() {
+        layer.open({
+            type: 1,
+            btn: ['确定', '取消'],
+            content: $("#select_prod"),
+            title: "名称",
+            area: ['270px', '160px'],
+            //当前层索引参数（index）、当前层的DOM对象（layero）
+            yes: function (index, layero) {
+                //获取input输入的值
+                var ivalue = $(layero).find("input").val();
+                //获取要添加的option的索引
+                var sIndex = $("#zcySelect")[0].options.length - 1;
+                if (ivalue == null || ivalue == '') {
+                    layer.msg("请输入名称")
+                }
+                else {
+                    layer.msg("输入的病名是：" + ivalue);
+                    //为select添加option
+                    $("#zcySelect").append("<option value=" + sIndex + ">" + ivalue + "</option>");
+                    renderForm();//表单重新渲染，要不然添加完显示不出来新的option
+                    layer.close(index);
+                }
+                $(layero).find("input").val('');
+            }
+        })
+    }
+
+</script>
+</body>
+</html>
