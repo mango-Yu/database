@@ -15,7 +15,7 @@ spring:
   messages:
     encoding: UTF-8
 server:
-  port: 8081
+  port: 8089
   tomcat:
     uri-encoding: utf-8
 
