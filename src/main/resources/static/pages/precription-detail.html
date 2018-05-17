@@ -315,7 +315,7 @@
         table.render({
             elem: '#preInfoTable'
             , height: 300
-            , url: 'http://localhost:8081/findbyid/'+id//数据接口
+            , url: 'http://123.206.62.148:8081/findbyid/'+id//数据接口
             , method:'POST'
             /*,where:{
                 id:id
@@ -373,7 +373,7 @@
                         var params = decodeURIComponent(dataStr, true);
                         console.log(params);
                         $.ajax({
-                            url: 'http://localhost:8081/update',
+                            url: 'http://123.206.62.148:8081/update',
                             type: 'POST',
                             contentType: "application/x-www-form-urlencoded;charset=UTF-8",
                             data: 'id='+data.id+"&"+params,
@@ -412,7 +412,7 @@
                     var params = decodeURIComponent(dataStr, true);
 
                     $.ajax({
-                        url: 'http://localhost:8081/save',
+                        url: 'http://123.206.62.148:8081/save',
                         type: 'POST',
                         contentType: "application/x-www-form-urlencoded;charset=UTF-8",
                         data: params,

@@ -4,8 +4,8 @@ spring:
       ddl-auto: update
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/person?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
-    username: root
+    url: jdbc:mysql://123.206.62.148:3306/person?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8
+    username: person
     password: 123456
   http:
     encoding:
