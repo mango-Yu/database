@@ -31,6 +31,7 @@ public class CorsFilter implements Filter {
         res.setHeader("Access-Control-Allow-Credentials", "true");
 
         res.setHeader("XDomainRequestAllowed", "1");
+        res.setHeader("autoReconnect", "true");
 
         chain.doFilter(request, response);
     }
