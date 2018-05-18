@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="./lib/layui/css/layui.css">
     <meta http-equiv="Access-Control-Allow-Origin" content="*"/>
+    <link rel="shortcut icon" href="../static/favicon.ico"/>
     <style>
         .inner {
             width: 1360px;
@@ -101,10 +102,10 @@
         //渲染表格
         table.render({
             elem:'#preInfoTable',
-            url:'http://localhost:8081/findpage',
+            url:'http://www.clubmsg.com:8081/findpage',
             cols:[[
-                {type: 'checkbox', fixed: 'left'}
-                ,{title: '序号',templet: '#indexTpl'}
+                {type: 'checkbox'}
+                ,{type:'numbers',title: '序号',templet: '#indexTpl'}
                 ,{field: 'name', title: '姓名', width:80}
                 ,{field: 'sex', title: '性别', width:80, sort: true}
                 ,{field: 'telephone', title: '电话', width:120}
