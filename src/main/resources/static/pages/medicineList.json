@@ -22,91 +22,19 @@
           "yao5",
           "yao6",
           "yao7",
-          "yao8"
-        ]
-      },
-      "foot": {
-        "symptom": [
-          "root1",
-          "root2",
-          "root3",
-          "root4",
-          "root5",
-          "root6",
-          "root7"
-        ],
-        "medicine": [
-          "yao1",
-          "yao2",
-          "yao3",
-          "yao4",
-          "yao5",
-          "yao6",
-          "yao7",
-          "yao8"
-        ]
-      },
-      "body": {
-        "symptom": [
-          "body1",
-          "body2",
-          "body3",
-          "body4",
-          "body5",
-          "body6",
-          "body7"
-        ],
-        "medicine": [
-          "yao1",
-          "yao2",
-          "yao3",
-          "yao4",
-          "yao5",
-          "yao6",
-          "yao7",
-          "yao8"
-        ]
-      },
-      "hand": {
-        "symptom": [
-          "hand1",
-          "hand2",
-          "hand3",
-          "hand4",
-          "hand5",
-          "hand6",
-          "hand7"
-        ],
-        "medicine": [
-          "yao1",
-          "yao2",
-          "yao3",
-          "yao4",
-          "yao5",
-          "yao6",
-          "yao7",
-          "yao8"
-        ]
-      },
-      "leg": {
-        "symptom": [
-          "leg1",
-          "leg2",
-          "leg3",
-          "leg4",
-          "leg5",
-          "leg6",
-          "leg7"
-        ],
-        "medicine": [
-          "yao1",
-          "yao2",
-          "yao3",
-          "yao4",
-          "yao5",
-          "yao6",
-          "yao7",
-          "yao8"
+          "yao8",
+          "yao9",
+          "yao10",
+          "yao11",
+          "yao12",
+          "yao13",
+          "yao14",
+          "yao15",
+          "yao16",
+          "yao17",
+          "yao18",
+          "yao19",
+          "yao20"
         ]
       }
     }
