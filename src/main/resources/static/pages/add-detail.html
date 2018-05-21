@@ -58,9 +58,62 @@
 
         .layui-table-view {
             margin-top: 30px;
-            width: 1170px !important;
+            width: 50% !important;
+            float: left;
         }
+        #select-info{
+            width: 50%;
+            float: left;
+            margin-top: 30px;;
+        }
+        #selected{
+            width: 100%;
+            min-height: 150px;
+            border: 1px solid #ccc;
 
+            overflow:auto;
+            zoom:1;
+        }
+        #selected li{
+            float: left;
+            list-style: none;
+            width: 20%;
+            padding: 5px;
+            margin: 8px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        .btn-box{
+            text-align: right;
+            font-size: 16px;
+        }
+        .count-money{}
+        .money{
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            line-height:80px;
+            text-align: center;
+            margin: 10px;
+            font-weight: bold;
+        }
+        .btn-box button{
+            display: inline-block;
+            margin: 5px;
+            width: 80px;
+            height: 24px;
+            line-height: 24px;
+            border: none;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .save-btn{
+
+        }
+        .print-btn{
+
+        }
+        .layui-table-header .layui-unselect{display: none;}
     </style>
 </head>
 <body>
@@ -125,6 +178,17 @@
                    lay-filter="preInfoTable">
 
             </table>
+            <div id="select-info">
+               <ul id="selected">
+
+
+               </ul>
+                <div class="btn-box">
+                    <div class="count-money"><sapn>共计：</sapn><input type="text" value="200" class="money">元</div>
+                    <button type="button" class="save-btn layui-btn-normal">保存</button>
+                    <button type="button" class="print-btn layui-bg-green">打印</button>
+                </div>
+            </div>
         </div>
         <div style="clear:both"></div>
     </div>
@@ -189,35 +253,87 @@
         $("#IllDetail").find("textarea").val('');
 
     }
-    var id='0000';
-    if($.cookie('ID') ){
-        id=$.cookie('ID');
-    }
+    var json='';
     layui.use(['table', 'form'], function () {
         var table = layui.table;
         var form = layui.form;
-        /*初始表格渲染*/
-        table.render({
-            elem: '#preInfoTable'
-            , height: 300
-            , url: './medicineList.json'//数据接口
-            , method:'GET'
 
-            , page: false //开启分页
-            , id: 'reloadTable'
-            , cols: [[ //表头
-                {type: 'checkbox'}
-                , {title: '序号', templet: '#indexTpl', width: 50}
-                , {field: 'medicine', title: '药方', width: 210, align: 'center' }
-                , {field: 'count', title: '用量', width: 210, align: 'center', edit: 'text'}
-            ]]
+        $.ajax({
+           url:'./medicineList.json' ,
+            type:'GET',
+            dataType:'json',
+            success:function (data) {
+
+                for(var i=0;i<data.data[0].head.medicine.length;i++){
+                    json+='{"id":"'+parseInt(i+1)+'","medicine":"'+data.data[0].head.medicine[i]+'"},';
+                }
+                /*初始表格渲染*/
+                table.render({
+                    elem: '#preInfoTable'
+                    , height: 500
+                    , data: JSON.parse("["+json.substring(0,json.length-1)+"]")//数据接口
+                    , page: true //开启分页
+                    , id: 'reloadTable'
+                    ,limit:'5'
+                    , cols: [[ //表头
+                        {type: 'checkbox'}
+                        , {title: '序号', field:'id', width: 50}
+                        , {field: 'medicine', title: '药方', width: 210, align: 'center' }
+                        , {field: 'count', title: '用量', width: 210, align: 'center', edit: 'text'}
+                    ]]
+                    ,done:function () {
+                        var length=$(".layui-table-body tbody").find("tr").length;
+                        for (var i=0;i<length;i++){
+                            var text=$(".layui-table-body tbody").find("tr").eq(i).find(".count").text();
+                            if(text==''){
+                                $(".layui-table-body.layui-table-main").find("input[name='layTableCheckbox']").eq(i).attr("disabled", 'disabled').removeAttr("checked");
+
+                            }else {
+                                $(".layui-table-body.layui-table-main").find("input[name='layTableCheckbox']").eq(i).removeAttr("disabled");
+                            }
+                        }
+                    }
+                });
+
+            }
         });
+         /*编辑单元格*/
+        table.on('edit(preInfoTable)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+           /* console.log(obj.value); //得到修改后的值
+            console.log(obj.field); //当前编辑的字段名
+            console.log(obj.data); //所在行的所有相关数据*/
+           $(this).closest("tr").find("input[name='layTableCheckbox']").removeAttr("disabled");
 
-    });
+        });
+        /*选中单元格*/
+        table.on('checkbox(preInfoTable)', function(obj){
+           /* console.log(obj.checked); //当前是否选中状态
+            console.log(obj.data); //选中行的相关数据
+            console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one   layui-form-checked
+            $(".layui-table-header").find("input[name='layTableCheckbox']").attr("disabled", 'disabled').removeAttr("checked");
+            */
+                var text=$(this).closest("tr").find(".laytable-cell-2-count").text();
+                    if(text!=''){
+                        var li='';
+                        if(obj.checked){
+                            li+='<li id="'+obj.data.id+'"><span class="name">'+obj.data.medicine+'</span><span class="count">'+obj.data.count+'</span></li>';
+                            $("#selected").append(li);
+                        }else {
+                            var length=$("#selected li").length;
+                            for(var i=0;i<=length;i++){
+                                var id=$("#selected li").eq(i).attr('id');
 
+                                if(!obj.checked && id==obj.data.id){
+                                    $("#selected").find("li").eq(i).remove()
+                                }
+                            }
+                        }
 
-
-</script>
-
-</body>
+                    }else {
+                        layer.alert("请填写药量！");
+                    }
+         });
+     });
+ </script>
+ </body>
 </html>

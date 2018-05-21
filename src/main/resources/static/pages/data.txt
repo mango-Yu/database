@@ -82,3 +82,26 @@
           "yao8"
         ]
       }*/
+
+
+
+      /*var title='<tr>' +
+                              '<th></th>' +
+                              '<th>序号</th>' +
+                              '<th>药品</th>' +
+                              '<th>用量</th>' +
+                              '</tr>';
+                     $(".layui-table-header thead").append(title);
+                      var tr='';
+                      console.log(res);
+                      for(var j=0;j<res.data.length;j++){
+                          for(var i=0;i<res.data[j].head.medicine.length;i++){
+                              tr+='<tr>' +
+                                      '<td></td>' +
+                                      '<td>'+(i+1)+'</td>' +
+                                      '<td>'+res.data[j].head.medicine[i]+'</td>' +
+                                      '<td><input type="text" value="请输入用量"></td>' +
+                                      '</tr>'
+                          }
+                      }
+                      $(".layui-table-body tbody").append(tr);*/
