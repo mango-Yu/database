@@ -18,7 +18,9 @@
             text-align: center;
             float: left;
         }
-
+        .active{
+            background: #40434a;
+        }
         #nav-menu .layui-nav-tree {
             width: 100px;
         }
@@ -122,14 +124,11 @@
         <div class="left-nav" id="nav-menu">
             <ul class="layui-nav layui-nav-tree" lay-filter="test">
                 <!-- 侧边导航: <ul class="layui-nav layui-nav-tree layui-nav-side"> -->
-                <li class="layui-nav-item"><a href="javascript:;">头</a></li>
-                <li class="layui-nav-item"><a href="javascript:;">手</a></li>
-                <li class="layui-nav-item"><a href="javascript:;">身</a></li>
-                <li class="layui-nav-item"><a href="javascript:;">足</a></li>
-                <li class="layui-nav-item"><a href="javascript:;">头</a></li>
-                <li class="layui-nav-item"><a href="javascript:;">手</a></li>
-                <li class="layui-nav-item"><a href="javascript:;">身</a></li>
-                <li class="layui-nav-item"><a href="javascript:;">足</a></li>
+                <li class="layui-nav-item active" data-type="head"><a href="javascript:;">头</a></li>
+                <li class="layui-nav-item" data-type="hand"><a href="javascript:;">手</a></li>
+                <li class="layui-nav-item" data-type="body"><a href="javascript:;">身</a></li>
+                <li class="layui-nav-item" data-type="foot"><a href="javascript:;">足</a></li>
+                <li class="layui-nav-item" data-type="leg"><a href="javascript:;">腿</a></li>
             </ul>
         </div>
         <div class="right-table">
@@ -138,11 +137,11 @@
                     <div class="layui-inline">
                         <div class="layui-input-inline proSelect">
                             <select name="symptom" lay-verify="required" lay-search="" id="zcySelect">
-                                <option value="">直接选择或搜索选择</option>
+                                <!--<option value="">直接选择或搜索选择</option>
                                 <option value="1">头晕</option>
                                 <option value="2">偏头痛</option>
                                 <option value="3">头疼</option>
-                                <option value="4">头热</option>
+                                <option value="4">头热</option>-->
                             </select>
                         </div>
                     </div>
@@ -205,14 +204,48 @@
 <script src="../lib/js/jquery-1.11.2.min.js"></script>
 <script src="../lib/js/jquery.cookie.js"></script>
 <script>
-    /*重新渲染form*/
+    /**
+     * 初始化页面数据
+     * */
+    initData("head");
+    /**
+    * 保存按钮
+    * */
+    $(".save-btn").click(function () {
+        console.log("dddd")
+    });
+    /**
+     * 打印按钮
+    * */
+    $(".print-btn").click(function () {
+        console.log("dddd")
+    });
+    /**
+     * 选择左侧大类
+     * */
+    $("#nav-menu li").click(function () {
+        $("#zcySelect").empty();
+        $(this).addClass("active").siblings().removeClass("active");
+        var title=$(this).data("type");
+        $("#selected").empty();
+        initData(title);
+        renderForm();
+    });
+    /**
+     * 重新渲染form表单
+     * */
     function renderForm() {
-        layui.use('form', function () {
+        layui.use(['form','table'], function () {
             var form = layui.form;
+            var table = layui.table;
             form.render();
+            table.render();
         });
+
     }
-    /*表单验证*/
+    /**
+     * 表单验证
+     * */
     function customValidate() {
         var name = $("input[name=name]").val();
         var telephone = $("input[name=telephone]").val();
@@ -245,7 +278,9 @@
         }
         return rs;
     }
-
+    /**
+     * 清空form表单值
+     * */
     function clearForm() {
         $("#IllDetail").find('input[name=name]').val('');
         $("#IllDetail").find('input[name=telephone]').val('');
@@ -253,87 +288,116 @@
         $("#IllDetail").find("textarea").val('');
 
     }
-    var json='';
-    layui.use(['table', 'form'], function () {
-        var table = layui.table;
-        var form = layui.form;
-
-        $.ajax({
-           url:'./medicineList.json' ,
-            type:'GET',
-            dataType:'json',
-            success:function (data) {
-
-                for(var i=0;i<data.data[0].head.medicine.length;i++){
-                    json+='{"id":"'+parseInt(i+1)+'","medicine":"'+data.data[0].head.medicine[i]+'"},';
-                }
-                /*初始表格渲染*/
-                table.render({
-                    elem: '#preInfoTable'
-                    , height: 500
-                    , data: JSON.parse("["+json.substring(0,json.length-1)+"]")//数据接口
-                    , page: true //开启分页
-                    , id: 'reloadTable'
-                    ,limit:'5'
-                    , cols: [[ //表头
-                        {type: 'checkbox'}
-                        , {title: '序号', field:'id', width: 50}
-                        , {field: 'medicine', title: '药方', width: 210, align: 'center' }
-                        , {field: 'count', title: '用量', width: 210, align: 'center', edit: 'text'}
-                    ]]
-                    ,done:function () {
-                        var length=$(".layui-table-body tbody").find("tr").length;
-                        for (var i=0;i<length;i++){
-                            var text=$(".layui-table-body tbody").find("tr").eq(i).find(".count").text();
-                            if(text==''){
-                                $(".layui-table-body.layui-table-main").find("input[name='layTableCheckbox']").eq(i).attr("disabled", 'disabled').removeAttr("checked");
-
-                            }else {
-                                $(".layui-table-body.layui-table-main").find("input[name='layTableCheckbox']").eq(i).removeAttr("disabled");
+    /**
+     * 初始化数据函数
+     * title 所属大类 用于选择关联的症状和药物
+     * */
+    function initData(title) {
+        var json='';
+        layui.use(['table', 'form'], function () {
+            var table = layui.table;
+            var form = layui.form;
+            /**
+             * 初始化大类和症状下拉框
+             * */
+            $.ajax({
+                url:'./medicineList.json' ,
+                type:'GET',
+                dataType:'json',
+                success:function (data) {
+                    var option='';
+                    for (var i=0;i<data.data.length;i++){
+                        if(data.data[i].title==title){
+                            for (var j=0;j<data.data[i].detail.symptom.length;j++){
+                                option+='<option>'+data.data[i].detail.symptom[j]+'</option>';
                             }
                         }
                     }
-                });
+                    $("#zcySelect").append(option);
+                    renderForm();
+                }
+            });
+            /**
+             * 初始化table表格
+             * */
+            $.ajax({
+                url:'./medicineList.json' ,
+                type:'GET',
+                dataType:'json',
+                success:function (data) {
 
-            }
-        });
-         /*编辑单元格*/
-        table.on('edit(preInfoTable)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
-           /* console.log(obj.value); //得到修改后的值
-            console.log(obj.field); //当前编辑的字段名
-            console.log(obj.data); //所在行的所有相关数据*/
-           $(this).closest("tr").find("input[name='layTableCheckbox']").removeAttr("disabled");
+                    for(var i=0;i<data.data.length;i++){
+                        if(data.data[i].title==title){
+                            for(var j=0;j<data.data[i].detail.medicine.length;j++){
+                                json+='{"id":"'+parseInt(j+1)+'","medicine":"'+data.data[i].detail.medicine[j]+'"},';
+                            }
+                        }
 
-        });
-        /*选中单元格*/
-        table.on('checkbox(preInfoTable)', function(obj){
-           /* console.log(obj.checked); //当前是否选中状态
-            console.log(obj.data); //选中行的相关数据
-            console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one   layui-form-checked
-            $(".layui-table-header").find("input[name='layTableCheckbox']").attr("disabled", 'disabled').removeAttr("checked");
-            */
-                var text=$(this).closest("tr").find(".laytable-cell-2-count").text();
-                    if(text!=''){
-                        var li='';
-                        if(obj.checked){
-                            li+='<li id="'+obj.data.id+'"><span class="name">'+obj.data.medicine+'</span><span class="count">'+obj.data.count+'</span></li>';
-                            $("#selected").append(li);
-                        }else {
-                            var length=$("#selected li").length;
-                            for(var i=0;i<=length;i++){
-                                var id=$("#selected li").eq(i).attr('id');
+                    }
+                    /*初始表格渲染*/
+                    table.render({
+                        elem: '#preInfoTable'
+                        , height: 500
+                        , data: JSON.parse("["+json.substring(0,json.length-1)+"]")//数据接口
+                        , page: true //开启分页
+                        , id: 'reloadTable'
+                        ,limit:'5'
+                        , cols: [[ //表头
+                            {type: 'checkbox'}
+                            , {title: '序号', field:'id', width: 50}
+                            , {field: 'medicine', title: '药方', width: 210, align: 'center' }
+                            , {field: 'count', title: '用量', width: 210, align: 'center', edit: 'text'}
+                        ]]
+                        ,done:function () {
+                            var length=$(".layui-table-body tbody").find("tr").length;
+                            for (var i=0;i<length;i++){
+                                var text=$(".layui-table-body tbody").find("tr").eq(i).find(".count").text();
+                                if(text==''){
+                                    $(".layui-table-body.layui-table-main").find("input[name='layTableCheckbox']").eq(i).attr("disabled", 'disabled').removeAttr("checked");
 
-                                if(!obj.checked && id==obj.data.id){
-                                    $("#selected").find("li").eq(i).remove()
+                                }else {
+                                    $(".layui-table-body.layui-table-main").find("input[name='layTableCheckbox']").eq(i).removeAttr("disabled");
                                 }
                             }
                         }
+                    });
 
+                }
+            });
+            /**
+             * 编辑单元格 count
+             * */
+            table.on('edit(preInfoTable)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+                $(this).closest("tr").find("input[name='layTableCheckbox']").removeAttr("disabled");
+                renderForm();
+            });
+            /**
+             * 选中单元格  checkbox
+             * */
+            table.on('checkbox(preInfoTable)', function(obj){
+                var text=$(this).closest("tr").find("td[data-field=count]").find("div").text();
+                if(text!=''){
+                    var li='';
+                    if(obj.checked){
+                        li+='<li id="'+obj.data.id+'"><span class="name">'+obj.data.medicine+'</span><span class="count">'+obj.data.count+'</span></li>';
+                        $("#selected").append(li);
                     }else {
-                        layer.alert("请填写药量！");
+                        var length=$("#selected li").length;
+                        for(var i=0;i<=length;i++){
+                            var id=$("#selected li").eq(i).attr('id');
+
+                            if(!obj.checked && id==obj.data.id){
+                                $("#selected").find("li").eq(i).remove()
+                            }
+                        }
                     }
-         });
-     });
+
+                }else {
+                    layer.alert("请填写药量！");
+                }
+            });
+        });
+    }
  </script>
  </body>
 </html>
