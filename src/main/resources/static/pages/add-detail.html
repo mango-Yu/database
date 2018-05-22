@@ -18,9 +18,11 @@
             text-align: center;
             float: left;
         }
-        .active{
+
+        .active {
             background: #40434a;
         }
+
         #nav-menu .layui-nav-tree {
             width: 100px;
         }
@@ -44,9 +46,11 @@
         #formTable {
             min-height: 90px;
         }
-        .person-form{
-           padding-left: 30px;;
+
+        .person-form {
+            padding-left: 30px;;
         }
+
         .layui-table-cell {
             height: auto;
             line-height: 28px;
@@ -63,20 +67,23 @@
             width: 50% !important;
             float: left;
         }
-        #select-info{
+
+        #select-info {
             width: 50%;
             float: left;
             margin-top: 30px;;
         }
-        #selected{
+
+        #selected {
             width: 100%;
             min-height: 150px;
             border: 1px solid #ccc;
 
-            overflow:auto;
-            zoom:1;
+            overflow: auto;
+            zoom: 1;
         }
-        #selected li{
+
+        #selected li {
             float: left;
             list-style: none;
             width: 20%;
@@ -85,21 +92,30 @@
             text-align: center;
             border: 1px solid #ccc;
         }
-        .btn-box{
+
+        #selected li span {
+            margin: 0 5px 0 5px;
+        }
+
+        .btn-box {
             text-align: right;
             font-size: 16px;
         }
-        .count-money{}
-        .money{
+
+        .count-money {
+        }
+
+        .money {
             display: inline-block;
             width: 50px;
             height: 24px;
-            line-height:80px;
+            line-height: 80px;
             text-align: center;
             margin: 10px;
             font-weight: bold;
         }
-        .btn-box button{
+
+        .btn-box button {
             display: inline-block;
             margin: 5px;
             width: 80px;
@@ -109,13 +125,18 @@
             border-radius: 3px;
             font-weight: bold;
         }
-        .save-btn{
+
+        .save-btn {
 
         }
-        .print-btn{
+
+        .print-btn {
 
         }
-        .layui-table-header .layui-unselect{display: none;}
+
+        .layui-table-header .layui-unselect {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -173,17 +194,15 @@
                     <button class="layui-btn" type="button" id="addIllDetail">添加病情</button>
                 </div>-->
             </form>
-            <table class="layui-table" id="preInfoTable" lay-data="{width: 892, height:300,id:'tableBox'}"
-                   lay-filter="preInfoTable">
-
+            <table class="layui-table" id="preInfoTable" lay-data="{width: 892, height:300}" lay-filter="preInfoTable">
             </table>
             <div id="select-info">
-               <ul id="selected">
-
-
-               </ul>
+                <ul id="selected"></ul>
                 <div class="btn-box">
-                    <div class="count-money"><sapn>共计：</sapn><input type="text" value="200" class="money">元</div>
+                    <div class="count-money">
+                        <sapn>共计：</sapn>
+                        <input type="text" value="" placeholder="200" class="money">元
+                    </div>
                     <button type="button" class="save-btn layui-btn-normal">保存</button>
                     <button type="button" class="print-btn layui-bg-green">打印</button>
                 </div>
@@ -209,16 +228,68 @@
      * */
     initData("head");
     /**
-    * 保存按钮
-    * */
+     * 保存按钮
+     * */
     $(".save-btn").click(function () {
-        console.log("dddd")
+        var data = '', medicineArr = '', medicine = '', formData = '', title = '', params = '',money='';
+        var validateResult = customValidate();
+        if (validateResult.flag) {
+            layer.alert(validateResult.text, {icon: 5});
+            return;
+        }
+        money=$(".money").val();
+        formData = $("#formTable").serialize();
+        title = $("#nav-menu li.active").data("type");
+        params = 'title=' + title + '&' + decodeURIComponent(formData, true)+ '&' +money;
+        for (var i = 0; i < $("#selected li").length; i++) {
+            medicineArr += '{"medicine' + i + '":"' + $("#selected li").eq(i).find("span").text() + '"},';
+        }
+        var medicineData = JSON.parse("[" + medicineArr.substring(0, medicineArr.length - 1) + "]");
+        medicineData.forEach(function (item, index) {
+            for (var key in item) {
+                medicine += '&' + key + '=' + item[key];
+            }
+        });
+        /*
+         * title=head&symptom=head1&name=ef&sex=女&telephone=1806392131&medicine0=yaoh1232g&medicine1=yaoh222g&medicine2=yaoh323g
+         * */
+        data += params + medicine;
+        if (data != '') {
+            layer.open({
+                title: '提示',
+                content: '是否确认当前金额',
+                btn:["确定","取消"],
+                btn1:function (index,layero) {
+                    $.ajax({
+                        url: './medicineList.json',
+                        type: 'POST',
+                        dataType: 'json',
+                        contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+                        data: data,
+                        success: function (res) {
+
+                          if(res.msg=="成功"){
+                              layer.alert('保存成功', {icon: 1,title:'提示',yes:function () {
+                                  window.location.reload();
+                              }});
+                          }
+                        }
+                    });
+
+                },
+                cancel:function (index,layero) {
+                    layer.close(index);
+                }
+            });
+
+
+        }
     });
     /**
      * 打印按钮
-    * */
+     * */
     $(".print-btn").click(function () {
-        console.log("dddd")
+        window.print()
     });
     /**
      * 选择左侧大类
@@ -226,7 +297,7 @@
     $("#nav-menu li").click(function () {
         $("#zcySelect").empty();
         $(this).addClass("active").siblings().removeClass("active");
-        var title=$(this).data("type");
+        var title = $(this).data("type");
         $("#selected").empty();
         initData(title);
         renderForm();
@@ -235,22 +306,31 @@
      * 重新渲染form表单
      * */
     function renderForm() {
-        layui.use(['form','table'], function () {
+        layui.use('form', function () {
             var form = layui.form;
-            var table = layui.table;
             form.render();
-            table.render();
         });
+    }
+    /**
+     * 重新加载table表格
+     * */
+    function renderTable(){
+        layui.use('table', function () {
+            var table = layui.table;
+            table.reload('reloadTable', {
 
+            });
+        });
     }
     /**
      * 表单验证
      * */
     function customValidate() {
         var name = $("input[name=name]").val();
+        var money = $(".money").val();
         var telephone = $("input[name=telephone]").val();
         var symptom = $("select[name=symptom]").val();
-        var medicine = $("textarea[name=medicine]").val();
+        var medicine = $("#selected li").html();
         var phoneTest = /^1[3|4|5|8][0-9]\d{4,8}$/;
         var rs = {
             flag: false,
@@ -268,12 +348,17 @@
         }
         if (!symptom) {
             rs.flag = true;
-            rs.text = '请输入病因';
+            rs.text = '请选择病因';
+            return rs;
+        }
+        if (!money) {
+            rs.flag = true;
+            rs.text = '请输入金额';
             return rs;
         }
         if (!medicine) {
             rs.flag = true;
-            rs.text = '请输入药方';
+            rs.text = '请选择药方';
             return rs;
         }
         return rs;
@@ -282,34 +367,34 @@
      * 清空form表单值
      * */
     function clearForm() {
-        $("#IllDetail").find('input[name=name]').val('');
-        $("#IllDetail").find('input[name=telephone]').val('');
-        $("#IllDetail").find('input[name=symptom]').val('');
-        $("#IllDetail").find("textarea").val('');
-
+        $("#formTable").find('input[name=name]').val('');
+        $("#formTable").find('input[name=telephone]').val('');
+        $("#formTable").find('select[name=symptom]').val('');
+        $(".money").val('');
+        $("#selected").html('');
+        renderForm();renderTable();
     }
     /**
      * 初始化数据函数
      * title 所属大类 用于选择关联的症状和药物
      * */
     function initData(title) {
-        var json='';
+        var json = '';
         layui.use(['table', 'form'], function () {
             var table = layui.table;
-            var form = layui.form;
             /**
              * 初始化大类和症状下拉框
              * */
             $.ajax({
-                url:'./medicineList.json' ,
-                type:'GET',
-                dataType:'json',
-                success:function (data) {
-                    var option='';
-                    for (var i=0;i<data.data.length;i++){
-                        if(data.data[i].title==title){
-                            for (var j=0;j<data.data[i].detail.symptom.length;j++){
-                                option+='<option>'+data.data[i].detail.symptom[j]+'</option>';
+                url: './medicineList.json',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    var option = '';
+                    for (var i = 0; i < data.data.length; i++) {
+                        if (data.data[i].title == title) {
+                            for (var j = 0; j < data.data[i].detail.symptom.length; j++) {
+                                option += '<option>' + data.data[i].detail.symptom[j] + '</option>';
                             }
                         }
                     }
@@ -321,15 +406,15 @@
              * 初始化table表格
              * */
             $.ajax({
-                url:'./medicineList.json' ,
-                type:'GET',
-                dataType:'json',
-                success:function (data) {
+                url: './medicineList.json',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
 
-                    for(var i=0;i<data.data.length;i++){
-                        if(data.data[i].title==title){
-                            for(var j=0;j<data.data[i].detail.medicine.length;j++){
-                                json+='{"id":"'+parseInt(j+1)+'","medicine":"'+data.data[i].detail.medicine[j]+'"},';
+                    for (var i = 0; i < data.data.length; i++) {
+                        if (data.data[i].title == title) {
+                            for (var j = 0; j < data.data[i].detail.medicine.length; j++) {
+                                json += '{"id":"' + parseInt(j + 1) + '","medicine":"' + data.data[i].detail.medicine[j] + '"},';
                             }
                         }
 
@@ -338,24 +423,24 @@
                     table.render({
                         elem: '#preInfoTable'
                         , height: 500
-                        , data: JSON.parse("["+json.substring(0,json.length-1)+"]")//数据接口
+                        , data: JSON.parse("[" + json.substring(0, json.length - 1) + "]")//数据接口
                         , page: true //开启分页
                         , id: 'reloadTable'
-                        ,limit:'5'
+                        , limit: '5'
                         , cols: [[ //表头
                             {type: 'checkbox'}
-                            , {title: '序号', field:'id', width: 50}
-                            , {field: 'medicine', title: '药方', width: 210, align: 'center' }
+                            , {title: '序号', field: 'id', width: 50}
+                            , {field: 'medicine', title: '药方', width: 210, align: 'center'}
                             , {field: 'count', title: '用量', width: 210, align: 'center', edit: 'text'}
                         ]]
-                        ,done:function () {
-                            var length=$(".layui-table-body tbody").find("tr").length;
-                            for (var i=0;i<length;i++){
-                                var text=$(".layui-table-body tbody").find("tr").eq(i).find(".count").text();
-                                if(text==''){
+                        , done: function () {
+                            var length = $(".layui-table-body tbody").find("tr").length;
+                            for (var i = 0; i < length; i++) {
+                                var text = $(".layui-table-body tbody").find("tr").eq(i).find(".count").text();
+                                if (text == '') {
                                     $(".layui-table-body.layui-table-main").find("input[name='layTableCheckbox']").eq(i).attr("disabled", 'disabled').removeAttr("checked");
 
-                                }else {
+                                } else {
                                     $(".layui-table-body.layui-table-main").find("input[name='layTableCheckbox']").eq(i).removeAttr("disabled");
                                 }
                             }
@@ -367,37 +452,37 @@
             /**
              * 编辑单元格 count
              * */
-            table.on('edit(preInfoTable)', function(obj){ //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+            table.on('edit(preInfoTable)', function (obj) { //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
                 $(this).closest("tr").find("input[name='layTableCheckbox']").removeAttr("disabled");
                 renderForm();
             });
             /**
              * 选中单元格  checkbox
              * */
-            table.on('checkbox(preInfoTable)', function(obj){
-                var text=$(this).closest("tr").find("td[data-field=count]").find("div").text();
-                if(text!=''){
-                    var li='';
-                    if(obj.checked){
-                        li+='<li id="'+obj.data.id+'"><span class="name">'+obj.data.medicine+'</span><span class="count">'+obj.data.count+'</span></li>';
+            table.on('checkbox(preInfoTable)', function (obj) {
+                var text = $(this).closest("tr").find("td[data-field=count]").find("div").text();
+                if (text != '') {
+                    var li = '';
+                    if (obj.checked) {
+                        li += '<li id="' + obj.data.id + '"><span class="name">' + obj.data.medicine + '</span><span class="count">' + obj.data.count + '</span></li>';
                         $("#selected").append(li);
-                    }else {
-                        var length=$("#selected li").length;
-                        for(var i=0;i<=length;i++){
-                            var id=$("#selected li").eq(i).attr('id');
+                    } else {
+                        var length = $("#selected li").length;
+                        for (var i = 0; i <= length; i++) {
+                            var id = $("#selected li").eq(i).attr('id');
 
-                            if(!obj.checked && id==obj.data.id){
+                            if (!obj.checked && id == obj.data.id) {
                                 $("#selected").find("li").eq(i).remove()
                             }
                         }
                     }
 
-                }else {
+                } else {
                     layer.alert("请填写药量！");
                 }
             });
         });
     }
- </script>
- </body>
+</script>
+</body>
 </html>
