@@ -114,6 +114,16 @@
             margin: 10px;
             font-weight: bold;
         }
+        .count {
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            line-height: 80px;
+            text-align: center;
+
+            font-weight: bold;
+        }
+
 
         .btn-box button {
             display: inline-block;
@@ -252,7 +262,7 @@
         title = $("#nav-menu li.active").data("type");
         params = 'title=' + title + '&' + decodeURIComponent(formData, true)+ '&' +money;
         for (var i = 0; i < $("#selected li").length; i++) {
-            medicineArr += '{"medicine' + i + '":"' + $("#selected li").eq(i).find("span").text() + '"},';
+            medicineArr += '{"medicine' + i + '":"' + $("#selected li").eq(i).find("span").text()+'-'+$("#selected li").eq(i).find(".count").val() + '"},';
         }
         var medicineData = JSON.parse("[" + medicineArr.substring(0, medicineArr.length - 1) + "]");
         medicineData.forEach(function (item, index) {
@@ -340,6 +350,7 @@
     function customValidate() {
         var name = $("input[name=name]").val();
         var money = $(".money").val();
+        var count = $("#selected").find("input[name=count]");
         var telephone = $("input[name=telephone]").val();
         var symptom = $("select[name=symptom]").val();
         var medicine = $("#selected li").html();
@@ -367,6 +378,18 @@
             rs.flag = true;
             rs.text = '请输入金额';
             return rs;
+        }
+        console.log(count.length);
+        for (var i=0;i<count.length;i++){
+            console.log(count.eq[i].val());
+            var val=count[i] ;
+            if (!val) {
+                console.log(count[i]);
+                rs.flag = true;
+                rs.text = '请输入药量';
+                return rs;
+
+            }
         }
         if (!medicine) {
             rs.flag = true;
@@ -443,9 +466,9 @@
                             {type: 'checkbox'}
                             , {title: '序号', field: 'id', width: 50}
                             , {field: 'medicine', title: '药方', width: 210, align: 'center'}
-                            , {field: 'count', title: '用量', width: 210, align: 'center', edit: 'text'}
+                            /*, {field: 'count', title: '用量', width: 210, align: 'center', edit: 'text'}*/
                         ]]
-                        , done: function () {
+                        /*, done: function () {
                             var length = $(".layui-table-body tbody").find("tr").length;
                             for (var i = 0; i < length; i++) {
                                 var text = $(".layui-table-body tbody").find("tr").eq(i).find(".count").text();
@@ -456,7 +479,7 @@
                                     $(".layui-table-body.layui-table-main").find("input[name='layTableCheckbox']").eq(i).removeAttr("disabled");
                                 }
                             }
-                        }
+                        }*/
                     });
 
                 }
@@ -464,19 +487,19 @@
             /**
              * 编辑单元格 count
              * */
-            table.on('edit(preInfoTable)', function (obj) { //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
+            /*table.on('edit(preInfoTable)', function (obj) { //注：edit是固定事件名，test是table原始容器的属性 lay-filter="对应的值"
                 $(this).closest("tr").find("input[name='layTableCheckbox']").removeAttr("disabled");
                 renderForm();
-            });
+            });*/
             /**
              * 选中单元格  checkbox
              * */
-            table.on('checkbox(preInfoTable)', function (obj) {
-                var text = $(this).closest("tr").find("td[data-field=count]").find("div").text();
-                if (text != '') {
+            table.on('checkbox(preInfoTable)', function (obj) {/*
+                var text = $(this).closest("tr").find("td[data-field=count]").find("div").text();*/
+                /*if (text != '') {*/
                     var li = '';
                     if (obj.checked) {
-                        li += '<li id="' + obj.data.id + '"><span class="name">' + obj.data.medicine + '</span><span class="count">' + obj.data.count + '</span></li>';
+                        li += '<li id="' + obj.data.id + '"><span class="name">' + obj.data.medicine + '</span><input value="" name="count" placeholder="请输入用量" class="count"/></li>';
                         $("#selected").append(li);
                     } else {
                         var length = $("#selected li").length;
@@ -489,9 +512,9 @@
                         }
                     }
 
-                } else {
+               /* } else {
                     layer.alert("请填写药量！");
-                }
+                }*/
             });
         });
     }
